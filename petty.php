@@ -17,13 +17,13 @@ function petty_scripts($hook) {
 		return;
 	}
 
-    wp_enqueue_script( 'petty_plugin_js', plugin_dir_url(__FILE__) . 'petty.js');
+    wp_enqueue_script( 'petty_plugin_js', plugin_dir_url(__FILE__) . '/js/petty.js');
 }
 
 add_action( 'admin_enqueue_scripts', 'petty_scripts' );
 
 function petty_front_scripts() {
-	wp_enqueue_script( 'petty_plugin_front_js', plugin_dir_url(__FILE__) . 'contador.js', ['jquery'], '123' ,true);	
+	wp_enqueue_script( 'petty_plugin_front_js', plugin_dir_url(__FILE__) . '/js/contador.js', ['jquery'], '123' ,true);	
 }
 
 add_action( 'wp_enqueue_scripts', 'petty_front_scripts' );
