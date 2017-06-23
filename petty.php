@@ -6,6 +6,7 @@ Plugin Name: Petty Plugin
 //require_once('post-types.php');
 require_once('campos-acesso-camera.php');
 
+
 //require_once(plugin_dir_url(__FILE__) . 'campos-acesso-camera.php');
 
 /* REGISTRAR SCRIPTS */
@@ -18,6 +19,8 @@ function petty_scripts($hook) {
 	}
 
     wp_enqueue_script( 'petty_plugin_js', plugin_dir_url(__FILE__) . '/js/petty.js');
+    wp_enqueue_script( 'vendors_sweetalert_js','https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.min.js');
+    wp_enqueue_style( 'vendors_sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 }
 
 add_action( 'admin_enqueue_scripts', 'petty_scripts' );
@@ -27,6 +30,7 @@ function petty_front_scripts() {
 }
 
 add_action( 'wp_enqueue_scripts', 'petty_front_scripts' );
+
 
 /* GERAR SENHA AO SALVAR */
 add_action( 'acf/save_post', 'acesso_camera_save', 30);
@@ -153,13 +157,12 @@ function petty_enviar_email_cliente() {
 	//Fazer Parse do texto do e-mail
 
 	//var_dump($titulo,$email,$corpo);
- 	//$envio = wp_mail( $emailCliente, $titulo, $corpo, ['Content-Type: text/html; charset=UTF-8']);	
- 	//var_dump($envio);
- 	$envio = 1;
+ 	$envio = wp_mail( $emailCliente, $titulo, $corpo, ['Content-Type: text/html; charset=UTF-8']);
+ 	//var_dump($envio);	
 	update_field( petty_field_id('enviado'), $envio,$post_id);
  	
 
- 	echo json_encode(['envio' => true, 'email' => $emailCliente]);
+ 	echo json_encode(['envio' => $envio, 'email' => $emailCliente]);
 	wp_die();
 }
 
@@ -211,7 +214,7 @@ add_action( 'manage_acesso_camera_posts_custom_column' , 'petty_dados_colunas', 
 /* Cria Shortcodes */
 // Add Shortcode
 function petty_contador( $atts ) {
-var_dump($atts);
+
 	// Attributes
 
 	if(!isset($atts['post_id']))
@@ -330,7 +333,8 @@ class PettyAcessoCamera {
 	}
 
 	public function senhaCorreta($senha) {
-		return ($senha == $this->getSenha());
+		//is admin or password
+		return (get_current_user_id() || ($senha == $this->getSenha()));
 	}	
 
 	public function formatar($timestamp) {
